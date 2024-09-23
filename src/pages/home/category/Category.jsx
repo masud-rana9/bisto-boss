@@ -2,9 +2,15 @@ import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
+import SectionTitle from "../../../components/SectionTitle";
 const Category = () => {
   return (
     <div className="">
+      <SectionTitle
+        header={"ORDER ONLINE"}
+        headerTitle={"---From 11:00am to 10:00pm---"}
+      />
+
       <Swiper
         slidesPerView={5}
         spaceBetween={20}
