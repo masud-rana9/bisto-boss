@@ -13,7 +13,6 @@ const Home = () => {
       <Helmet>
         <title>Bisto Boss | Home</title>
       </Helmet>
-
       <Banner />
       <Category />
       <Popular />
