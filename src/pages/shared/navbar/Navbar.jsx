@@ -1,6 +1,19 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../../providers/Authprovider";
+import { FaCartShopping } from "react-icons/fa6";
+import useCart from "../../../hooks/useCart";
 
 const Navbar = () => {
+  const [cart] = useCart();
+  const { user, logOut } = useContext(AuthContext);
+  const handleLogOut = () => {
+    logOut()
+      .then(() => {})
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <div className="">
       <div className="navbar fixed z-10 bg-transparent max-w-screen-2xl bg-opacity-30 text-white bg-black ">
@@ -63,8 +76,38 @@ const Navbar = () => {
               </Link>
             </li>
             <li>
+              <Link to="/secret">
+                <a>Secret</a>
+              </Link>
+            </li>
+            <li>
               <Link to="/order/salad">
                 <a>Order</a>
+              </Link>
+            </li>
+
+            <li>
+              {user ? (
+                <Link>
+                  <span className="text-white">{user?.displayName}</span>
+                  <button onClick={handleLogOut} className="">
+                    Logout
+                  </button>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <a>Login</a>
+                  </Link>
+                </>
+              )}
+            </li>
+            <li>
+              <Link to="/dashboard/cart">
+                <button className="btn">
+                  <FaCartShopping />
+                  <div className="badge badge-secondary">+{cart.length}</div>
+                </button>
               </Link>
             </li>
           </ul>

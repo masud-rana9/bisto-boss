@@ -2,124 +2,103 @@ import { useState } from "react";
 import UseMenu from "../../../hooks/UseMenu";
 import Ordercard from "../card/Ordercard";
 import { useParams } from "react-router-dom";
-// Assuming Ordercard is in the same folder or adjust the path
 
 const AppTab = () => {
   const categories = ["salad", "soup", "dessert", "drinks", "pizza"];
-  // Always call hooks unconditionally at the top level
-  const [menu] = UseMenu(); // This should always be called in the same way, regardless of render cycles
-  console.log(menu);
+  const [menu] = UseMenu();
+
   // Filter the categories once
   const salad = menu.filter((item) => item.category === "salad");
   const pizza = menu.filter((item) => item.category === "pizza");
   const soup = menu.filter((item) => item.category === "soup");
   const dessert = menu.filter((item) => item.category === "dessert");
   const drinks = menu.filter((item) => item.category === "drinks");
-
+  console.log(salad);
   const { category } = useParams();
-  console.log(category);
   const initialIndex = categories.indexOf(category);
-  console.log(initialIndex);
-  // Define the current active tab
+
   const [activeTab, setActiveTab] = useState(initialIndex);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   // Function to switch tabs
   const handleTabClick = (index) => {
     setActiveTab(index);
+    setCurrentPage(1); // Reset to first page when switching tabs
+  };
+
+  // Calculate the number of pages
+  const totalPages = (items) => Math.ceil(items.length / itemsPerPage);
+
+  // Function to handle pagination
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
   };
 
   // Map the appropriate content for each tab
   const renderTabContent = () => {
+    let items = [];
+
     switch (activeTab) {
       case 0:
-        return salad.map((item) => (
-          <Ordercard
-            key={item._id}
-            img={item.image}
-            name={item.name}
-            description={item.description}
-          />
-        ));
+        items = salad;
+        break;
       case 1:
-        return soup.map((item) => (
-          <Ordercard
-            key={item._id}
-            img={item.image}
-            name={item.name}
-            description={item.description}
-          />
-        ));
+        items = soup;
+        break;
       case 2:
-        return dessert.map((item) => (
-          <Ordercard
-            key={item._id}
-            img={item.image}
-            name={item.name}
-            description={item.description}
-          />
-        ));
+        items = dessert;
+        break;
       case 3:
-        return drinks.map((item) => (
-          <Ordercard
-            key={item._id}
-            img={item.image}
-            name={item.name}
-            description={item.description}
-          />
-        ));
+        items = drinks;
+        break;
       case 4:
-        return pizza.map((item) => (
-          <Ordercard
-            key={item._id}
-            img={item.image}
-            name={item.name}
-            description={item.description}
-          />
-        ));
+        items = pizza;
+        break;
       default:
         return null;
     }
+
+    // Get the current items for the page
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedItems = items.slice(startIndex, startIndex + itemsPerPage);
+
+    return paginatedItems.map((item) => (
+      <Ordercard key={item._id} item={item} />
+    ));
   };
 
   return (
     <div className="my-10 text-2xl">
       {/* Tab Buttons */}
       <div className="tab-buttons text-center">
-        <button
-          className={activeTab === 0 ? "active" : ""}
-          onClick={() => handleTabClick(0)}
-        >
-          Salad
-        </button>
-        <button
-          className={activeTab === 1 ? "active" : ""}
-          onClick={() => handleTabClick(1)}
-        >
-          Soup
-        </button>
-        <button
-          className={activeTab === 2 ? "active" : ""}
-          onClick={() => handleTabClick(2)}
-        >
-          Desserts
-        </button>
-        <button
-          className={activeTab === 3 ? "active" : ""}
-          onClick={() => handleTabClick(3)}
-        >
-          Drinks
-        </button>
-        <button
-          className={activeTab === 4 ? "active" : ""}
-          onClick={() => handleTabClick(4)}
-        >
-          Pizza
-        </button>
+        {categories.map((cat, index) => (
+          <button
+            key={index}
+            className={activeTab === index ? "active" : ""}
+            onClick={() => handleTabClick(index)}
+          >
+            {cat.charAt(0).toUpperCase() + cat.slice(1)}
+          </button>
+        ))}
       </div>
 
       {/* Tab Content */}
       <div className="mt-10 text-black grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16">
         {renderTabContent()}
+      </div>
+
+      {/* Pagination Buttons */}
+      <div className="pagination text-center my-5">
+        {[...Array(totalPages(categories[activeTab]))].map((_, index) => (
+          <button
+            key={index}
+            className={`mx-2 ${currentPage === index + 1 ? "font-bold" : ""}`}
+            onClick={() => handlePageClick(index + 1)}
+          >
+            {index + 1}
+          </button>
+        ))}
       </div>
 
       {/* Styling */}
@@ -135,8 +114,10 @@ const AppTab = () => {
           padding-bottom: 2px;
         }
 
-        .tab-content {
-          margin-top: 20px;
+        .pagination button {
+          padding: 5px 10px;
+          margin: 0 5px;
+          cursor: pointer;
         }
       `}</style>
     </div>
