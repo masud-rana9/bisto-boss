@@ -10,16 +10,22 @@ const SocialLogin = () => {
   const axiosPublic = useAxiosPublic();
 
   const handleSignWithGoogle = () => {
-    googleSignIn().then((result) => {
-      const userInfo = {
-        email: result.user?.email,
-        name: result.user?.displayName,
-      };
-      axiosPublic.post("/users", userInfo).then((res) => {
-        console.log(res.data);
+    googleSignIn()
+      .then((result) => {
+        const userInfo = {
+          email: result.user?.email,
+          name: result.user?.displayName,
+        };
+        return axiosPublic.post("/users", userInfo);
+      })
+      .then((res) => {
+        console.log("User saved:", res.data);
         navigate(from, { replace: true });
+      })
+      .catch((error) => {
+        console.error("Error during sign-in or user saving:", error);
+        // Optionally show an error message to the user here
       });
-    });
   };
 
   return (

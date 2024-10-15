@@ -1,10 +1,9 @@
 import React from "react";
 
-const AppFormInput = ({
+const AppSelectorInput = ({
   name,
   label,
-  type = "text",
-  placeholder,
+  options = [],
   validation,
   register,
   errors,
@@ -21,13 +20,20 @@ const AppFormInput = ({
   return (
     <div className="form-control">
       <label htmlFor={name}>{label}</label>
-      <input
+      <select
         id={name}
-        type={type}
-        placeholder={placeholder}
         {...register(name, validationRules)}
-        className="input"
-      />
+        className="select-input input"
+      >
+        <option value="" className="text-gray-300">
+          Select an option
+        </option>
+        {options.map((option, index) => (
+          <option key={index} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
       {errors[name] && (
         <p className="error-message text-red-600">{errors[name]?.message}</p>
       )}
@@ -35,4 +41,4 @@ const AppFormInput = ({
   );
 };
 
-export default AppFormInput;
+export default AppSelectorInput;
